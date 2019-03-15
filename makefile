@@ -48,5 +48,36 @@ social-network-delete: ## social-network-delete
 	helm delete --purge edge-service
 	helm delete --purge user-service
 	helm delete --purge recommendation-service
+	
+scale-down-all:
+	kubectl config set-context minikube --namespace=social-network
+	kubectl scale --replicas=0 deployment/edge-service
+	kubectl scale --replicas=0 deployment/recommendation-service
+	kubectl scale --replicas=0 deployment/friend-service
+	kubectl scale --replicas=0 deployment/user-service
+	kubectl scale --replicas=0 deployment/social-network-prometheus-server
+	kubectl scale --replicas=0 deployment/social-network-prometheus-kube-state-metrics	
+	kubectl scale --replicas=0 deployment/social-network-grafana
+	kubectl scale --replicas=0 statefulset/recommendation-service-neo4j-core
+	kubectl scale --replicas=0 statefulset/friend-db
+	kubectl scale --replicas=0 statefulset/user-db
+	kubectl scale --replicas=0 statefulset/kafka
+	kubectl scale --replicas=0 statefulset/social-network-zookeeper
+	
+scale-up-all:
+	kubectl config set-context minikube --namespace=social-network
+	kubectl scale --replicas=1 deployment/edge-service
+	kubectl scale --replicas=1 deployment/recommendation-service
+	kubectl scale --replicas=1 deployment/friend-service
+	kubectl scale --replicas=1 deployment/user-service
+	kubectl scale --replicas=1 deployment/social-network-prometheus-server
+	kubectl scale --replicas=1 deployment/social-network-prometheus-kube-state-metrics
+	kubectl scale --replicas=1 deployment/social-network-grafana
+	kubectl scale --replicas=1 statefulset/recommendation-service-neo4j-core
+	kubectl scale --replicas=1 statefulset/friend-db
+	kubectl scale --replicas=1 statefulset/user-db
+	kubectl scale --replicas=3 statefulset/kafka
+	kubectl scale --replicas=3 statefulset/social-network-zookeeper
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
