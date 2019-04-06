@@ -10,6 +10,8 @@ install-helm: ## install-helm
 	helm init --service-account=tiller
 	
 update-deps: ## update-deps
+	helm repo add bitnami https://charts.bitnami.com
+	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
 	helm dep update deployment/helm/social-network
 	helm dep update deployment/helm/friend-service
 	helm dep update deployment/helm/user-service
